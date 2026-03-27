@@ -1,10 +1,11 @@
-import type { Tables } from '@/lib/database.types';
+import { formatDuration, formatPrice } from '@/lib/format';
+import type { CourseWithInstructor } from '@/services/courses';
 import { Pressable, Text, View } from '@/tw';
 import { Image } from '@/tw/image';
 import { useRouter } from 'expo-router';
 import { Clock, Star, User } from 'lucide-react-native';
 
-export function CourseItem({ course }: { course: Tables<'courses'> }) {
+export function CourseItem({ course }: { course: CourseWithInstructor }) {
   const router = useRouter();
 
   return (
@@ -22,22 +23,28 @@ export function CourseItem({ course }: { course: Tables<'courses'> }) {
         </Text>
         <View className="flex-row items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-md">
           <Star size={12} color="#eab308" fill="#eab308" />
-          <Text className="text-[12px] font-bold text-primary">4.8</Text>
+          <Text className="text-[12px] font-bold text-primary">
+            {course.rating}
+          </Text>
         </View>
       </View>
       <View className="flex-row items-center gap-3">
         <View className="flex-row items-center gap-1">
           <User size={13} color="#64748B" />
-          <Text className="text-[13px] text-text-muted">Instructor</Text>
+          <Text className="text-[13px] text-text-muted">
+            {course.instructor?.name ?? 'Instructor'}
+          </Text>
         </View>
         <View className="flex-row items-center gap-1">
           <Clock size={13} color="#64748B" />
-          <Text className="text-[13px] text-text-muted">12h 45m</Text>
+          <Text className="text-[13px] text-text-muted">
+            {formatDuration(course.total_duration)}
+          </Text>
         </View>
       </View>
       <View className="mt-3 flex-row items-center justify-between">
         <Text className="text-[18px] font-bold text-text-main">
-          ${course.price?.toFixed(2) ?? '0.00'}
+          {course.price === 0 ? 'Free' : formatPrice(course.price)}
         </Text>
         <Pressable>
           <Text className="text-[13px] font-bold text-primary">

@@ -11,12 +11,19 @@ export function useCourses() {
   return useQuery({
     queryKey: coursesKeys.all,
     queryFn: async () => {
-      const { data, error } = await supabase.from('courses').select();
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*, instructor:profiles!courses_instructor_id_fkey(name, avatar_url, role, company)')
+        .throwOnError();
       if (error) throw error;
       return data;
     },
   });
 }
+
+export type CourseWithInstructor = NonNullable<
+  ReturnType<typeof useCourses>['data']
+>[number];
 
 export function useDeleteCourse() {
   const supabase = useSupabase();

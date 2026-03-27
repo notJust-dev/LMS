@@ -12,8 +12,9 @@ import {
   Award,
   CheckCircle,
 } from 'lucide-react-native';
+import { formatDuration } from '@/lib/format';
+import type { CourseWithInstructor } from '@/services/courses';
 import { FlatList } from 'react-native';
-import type { Tables } from '@/lib/database.types';
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -115,7 +116,7 @@ function HeroContinueCard() {
   );
 }
 
-function CourseCard({ course }: { course: Tables<'courses'> }) {
+function CourseCard({ course }: { course: CourseWithInstructor }) {
   const router = useRouter();
 
   return (
@@ -130,7 +131,7 @@ function CourseCard({ course }: { course: Tables<'courses'> }) {
         />
         <View className="absolute top-3 right-3 bg-white/90 px-2 py-1 rounded-lg flex-row items-center gap-1">
           <Star size={12} color="#facc15" fill="#facc15" />
-          <Text className="text-[11px] font-bold">4.8</Text>
+          <Text className="text-[11px] font-bold">{course.rating}</Text>
         </View>
       </View>
       <View className="p-4">
@@ -142,7 +143,9 @@ function CourseCard({ course }: { course: Tables<'courses'> }) {
         </Text>
         <View className="flex-row items-center gap-2">
           <Clock size={14} color="#64748B" />
-          <Text className="text-[12px] text-text-muted">24h total</Text>
+          <Text className="text-[12px] text-text-muted">
+            {formatDuration(course.total_duration)}
+          </Text>
         </View>
       </View>
     </Pressable>
