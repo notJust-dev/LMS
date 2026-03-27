@@ -1,7 +1,7 @@
 import { useAuth } from '@clerk/expo';
 import { createClient } from '@supabase/supabase-js';
 import { useMemo } from 'react';
-// import type { Database } from './database.types';
+import type { Database } from './database.types';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
@@ -19,7 +19,7 @@ export function useSupabase() {
 
   return useMemo(
     () =>
-      createClient(supabaseUrl, supabaseAnonKey, {
+      createClient<Database>(supabaseUrl, supabaseAnonKey, {
         async accessToken() {
           return (await getToken()) ?? null;
         },
