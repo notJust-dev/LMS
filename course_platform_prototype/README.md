@@ -11,6 +11,10 @@ course_platform_prototype/
 │   ├── educational_insight.html
 │   ├── social_proof_testimonials.html
 │   ├── premium_paywall.html
+│   ├── learning_dashboard.html
+│   ├── course_details.html
+│   ├── lesson_player.html
+│   ├── course_search_feed.html
 ├── course_platform_all_in_one.html  (Preview file with all screens embedded)
 ├── PROJECT_DOCUMENTATION.md  (Comprehensive project documentation)
 └── README.md             (This file)
@@ -32,7 +36,7 @@ course_platform_prototype/
 
 ## Files
 
-This prototype contains 6 screen(s) in the **screens/** folder:
+This prototype contains 10 screen(s) in the **screens/** folder:
 
 1. screens/welcome_onboarding.html
 2. screens/goal_selection_quiz.html
@@ -40,6 +44,10 @@ This prototype contains 6 screen(s) in the **screens/** folder:
 4. screens/educational_insight.html
 5. screens/social_proof_testimonials.html
 6. screens/premium_paywall.html
+7. screens/learning_dashboard.html
+8. screens/course_details.html
+9. screens/lesson_player.html
+10. screens/course_search_feed.html
 
 
 **Root Files:**
