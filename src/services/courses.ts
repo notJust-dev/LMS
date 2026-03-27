@@ -3,6 +3,7 @@ import { useSupabase } from '@/lib/supabase';
 
 export const coursesKeys = {
   all: ['courses'] as const,
+  detail: (id: string) => ['courses', id] as const,
 };
 
 export function useCourses() {
@@ -24,6 +25,27 @@ export function useCourses() {
 export type CourseWithInstructor = NonNullable<
   ReturnType<typeof useCourses>['data']
 >[number];
+
+export function useCourse(id: string) {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: coursesKeys.detail(id),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('courses')
+        .select(
+          '*, instructor:profiles!courses_instructor_id_fkey(name, avatar_url, role, company), chapters(*, lessons(*))'
+        )
+        .eq('id', id)
+        .single()
+        .throwOnError();
+      return data;
+    },
+  });
+}
+
+export type CourseDetail = NonNullable<ReturnType<typeof useCourse>['data']>;
 
 export function useDeleteCourse() {
   const supabase = useSupabase();
