@@ -59,6 +59,7 @@ function TopBar() {
 }
 
 function HeroContinueCard() {
+  const router = useRouter();
   const progress = 65;
   const lessonsCompleted = 12;
   const totalLessons = 18;
@@ -99,7 +100,10 @@ function HeroContinueCard() {
             </View>
           </View>
 
-          <Pressable className="w-full bg-primary py-3.5 rounded-xl active:scale-[0.98] flex-row items-center justify-center gap-2">
+          <Pressable
+            onPress={() => router.push('/course/1/lesson/1-1')}
+            className="w-full bg-primary py-3.5 rounded-xl active:scale-[0.98] flex-row items-center justify-center gap-2"
+          >
             <PlayCircle size={20} color="#ffffff" />
             <Text className="text-white font-bold text-[16px]">
               Resume Lesson

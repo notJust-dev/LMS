@@ -99,7 +99,7 @@ function Chapter({
 }
 
 export default function CourseDetailsScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { course_id } = useLocalSearchParams<{ course_id: string }>();
   const insets = useSafeAreaInsets();
   const [expandedChapter, setExpandedChapter] = useState('1');
 

@@ -33,14 +33,8 @@ function RootStack() {
         <Stack.Protected guard={isOnboarded}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen
-            name="course/[id]"
-            options={{
-              presentation: 'card',
-              headerTransparent: true,
-              headerTitle: '',
-              headerBackButtonDisplayMode: 'minimal',
-              headerShadowVisible: false,
-            }}
+            name="course/[course_id]"
+            options={{ headerShown: false }}
           />
         </Stack.Protected>
       </Stack.Protected>
