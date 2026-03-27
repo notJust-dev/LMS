@@ -36,9 +36,39 @@ LMS (Learning Management System) — a React Native / Expo mobile app using file
 - `tailwind-merge` and `clsx` are available for conditional/merged class names
 - Metro config (`metro.config.js`) wraps with `withNativewind`; PostCSS config uses `@tailwindcss/postcss`
 
+## Authentication — Clerk
+
+- `@clerk/expo` handles all authentication (sign-in, sign-up, session management)
+- `ClerkProvider` wraps the app in `src/app/_layout.tsx` with `tokenCache` for secure token storage
+- Use `useAuth()` for auth state, `useUser()` for user info
+- Clerk session tokens are automatically forwarded to Supabase (see below)
+
+## Backend — Supabase
+
+- Local Supabase dev environment (`npx supabase start` / `npx supabase stop`)
+- **Client:** `useSupabase()` hook from `@/lib/supabase` — returns a typed Supabase client that attaches the Clerk JWT automatically
+- **Types:** `src/lib/database.types.ts` — auto-generated, do not edit manually. Regenerate with `npx supabase gen types typescript --local > src/lib/database.types.ts`
+- **Migrations:** `supabase/migrations/` — create new ones with `npx supabase migration new <name>`
+- **Seed data:** `supabase/seed.sql` — applied on `npx supabase db reset`
+- **RLS:** All tables must have Row Level Security enabled. Policies use `(auth.jwt() ->> 'sub')` to match the Clerk user ID
+- Prefer `.throwOnError()` on Supabase queries/mutations so errors propagate to TanStack Query instead of being silently swallowed
+
+## Data Fetching — TanStack Query
+
+- `QueryClientProvider` wraps the app inside `ClerkProvider` in `src/app/_layout.tsx`
+- **All remote data fetching and mutations must go through TanStack Query** (`useQuery`, `useMutation`)
+- **Service hooks pattern:** Data logic lives in `src/services/<entity>.ts`, not in screen components
+  - Each service file exports a query key factory (e.g. `coursesKeys`), query hooks (e.g. `useCourses`), and mutation hooks (e.g. `useDeleteCourse`)
+  - Screen components import and use these hooks — they should contain no direct Supabase calls
+- Mutations should invalidate relevant query keys on success
+
 ## Key Dependencies
 
 - `react-native-reanimated` + `react-native-gesture-handler` for animations/gestures
 - `react-native-screens` + `react-native-safe-area-context` for navigation
 - `expo-image` for optimized image loading
 - `expo-glass-effect` for blur/glass UI effects
+- `@clerk/expo` for authentication
+- `@supabase/supabase-js` for backend/database
+- `@tanstack/react-query` for data fetching and cache management
+
