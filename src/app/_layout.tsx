@@ -1,7 +1,7 @@
 import { ClerkProvider, useAuth } from '@clerk/expo';
 import { AuthView } from '@clerk/expo/native';
 import { tokenCache } from '@clerk/expo/token-cache';
-import { Stack } from 'expo-router';
+import { Stack } from 'expo-router/stack';
 import { ActivityIndicator } from 'react-native';
 import "../global.css";
 
@@ -15,16 +15,18 @@ function RootStack() {
   const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
 
   if (!isLoaded) {
-    return (
-      <ActivityIndicator size="large" />
-    )
+    return <ActivityIndicator size="large" />
   }
 
   if (!isSignedIn) {
     return <AuthView mode="signInOrUp" />
   }
 
-  return <Stack />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+    </Stack>
+  );
 }
 
 export default function RootLayout() {
