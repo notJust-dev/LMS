@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta content="width=393, height=852, initial-scale=1.0" name="viewport"><title>goal_selection_quiz</title><script src="https://cdn.tailwindcss.com"></script><script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script><style>        :root {            --color-primary: #2563EB;            --color-surface: #FFFFFF;            --color-border: #E5E7EB;            --color-text-main: #0F172A;            --color-text-muted: #64748B;            --color-bg: #FFFFFF;        }        .iphone-frame {            width: 393px;            height: 852px;            background-color: #ffffff;            position: relative;            border-radius: 0px;            box-shadow: 0 0 20px rgba(0,0,0,0.1);            overflow: hidden;            margin: 2rem auto;        }        .custom-shadow {            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);        }        .option-card {            transition: all 0.2s ease;        }        .option-card.active {            border-color: var(--color-primary);            background-color: #EFF6FF;        }    </style></head><body class="bg-gray-100"><div class="iphone-frame flex flex-col bg-[var(--color-bg)]"><!-- #header-nav_001 --><div class="px-6 pt-12 pb-6 flex items-center justify-between"><button class="w-10 h-10 flex items-center justify-center border border-[var(--color-border)] rounded-xl active:scale-90" data-navigates-to="welcome_onboarding.html" style="; cursor: pointer;"><iconify-icon class="text-[var(--color-text-main)] text-xl" icon="lucide:chevron-left"></iconify-icon></button><div class="flex-1 mx-8"><div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-[var(--color-primary)] w-[16.6%]"></div></div></div><span class="text-[13px] font-semibold text-[var(--color-text-muted)] w-10 text-right">1/6</span></div><!-- /#header-nav_001 --><!-- #quiz-content_002 --><div class="flex-1 overflow-y-auto px-6"><!-- #quiz-title_003 --><div class="mb-8 mt-4"><h2 class="text-[28px] font-bold text-[var(--color-text-main)] leading-tight mb-3">                    What's your primary goal?                </h2><p class="text-[16px] text-[var(--color-text-muted)]">                    We'll customize your course recommendations based on your choice.                </p></div><!-- /#quiz-title_003 --><!-- #options-grid_004 --><div class="space-y-4"><!-- #option-1_005 --><div class="option-card p-5 border border-[var(--color-border)] rounded-2xl flex items-center gap-4 active:scale-[0.98]"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center"><iconify-icon class="text-[var(--color-primary)] text-2xl" icon="lucide:briefcase"></iconify-icon></div><div class="flex-1"><h3 class="text-[17px] font-semibold text-[var(--color-text-main)]">Career Advancement</h3><p class="text-[14px] text-[var(--color-text-muted)]">Get promoted or learn new job skills</p></div></div><!-- /#option-1_005 --><!-- #option-2_006 --><div class="option-card p-5 border border-[var(--color-border)] rounded-2xl flex items-center gap-4 active:scale-[0.98] active active"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center"><iconify-icon class="text-[var(--color-primary)] text-2xl" icon="lucide:graduation-cap"></iconify-icon></div><div class="flex-1"><h3 class="text-[17px] font-semibold text-[var(--color-text-main)]">Switch Career Path</h3><p class="text-[14px] text-[var(--color-text-muted)]">Start from zero in a new industry</p></div><iconify-icon class="text-[var(--color-primary)] text-2xl" icon="lucide:check-circle"></iconify-icon></div><!-- /#option-2_006 --><!-- #option-3_007 --><div class="option-card p-5 border border-[var(--color-border)] rounded-2xl flex items-center gap-4 active:scale-[0.98]"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center"><iconify-icon class="text-[var(--color-primary)] text-2xl" icon="lucide:palette"></iconify-icon></div><div class="flex-1"><h3 class="text-[17px] font-semibold text-[var(--color-text-main)]">Personal Growth</h3><p class="text-[14px] text-[var(--color-text-muted)]">Explore hobbies and creative interests</p></div></div><!-- /#option-3_007 --><!-- #option-4_008 --><div class="option-card p-5 border border-[var(--color-border)] rounded-2xl flex items-center gap-4 active:scale-[0.98]"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center"><iconify-icon class="text-[var(--color-primary)] text-2xl" icon="lucide:award"></iconify-icon></div><div class="flex-1"><h3 class="text-[17px] font-semibold text-[var(--color-text-main)]">Certifications</h3><p class="text-[14px] text-[var(--color-text-muted)]">Earn industry-recognized credentials</p></div></div><!-- /#option-4_008 --></div><!-- /#options-grid_004 --></div><!-- /#quiz-content_002 --><!-- #fixed-footer_009 --><div class="p-8 bg-white relative z-20 border-t border-[var(--color-border)]"><button class="w-full bg-[var(--color-primary)] text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-all custom-shadow" data-navigates-to="interest_selection_quiz.html" style="; cursor: pointer;">                Continue            </button></div><!-- /#fixed-footer_009 --></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Collect all navigable elements with their targets
+        const hotspots = [];
+        document.querySelectorAll('[data-navigates-to]').forEach(el => {
+          hotspots.push({
+            element: el,
+            target: el.getAttribute('data-navigates-to'),
+            isScreenTap: el.getAttribute('data-screen-tap') === 'true'
+          });
+        });
+
+        // Document-level capture phase click handler
+        // Checks click position against element bounds - works regardless of z-index stacking
+        document.addEventListener('click', (e) => {
+          const clickX = e.clientX;
+          const clickY = e.clientY;
+
+          // First check screen-tap (tap anywhere) connections
+          const screenTapHotspot = hotspots.find(h => h.isScreenTap);
+          if (screenTapHotspot && screenTapHotspot.target) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = screenTapHotspot.target;
+            return;
+          }
+
+          // Check each hotspot element's bounds
+          for (const hotspot of hotspots) {
+            if (hotspot.isScreenTap) continue; // Already handled above
+            try {
+              const rect = hotspot.element.getBoundingClientRect();
+              if (clickX >= rect.left && clickX <= rect.right &&
+                  clickY >= rect.top && clickY <= rect.bottom) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (hotspot.target) window.location.href = hotspot.target;
+                return;
+              }
+            } catch (err) {
+              // Element might have issues, skip it
+            }
+          }
+
+          // Prevent default for non-connected interactive elements
+          const clickedInteractive = e.target.closest('a, button, [onclick]');
+          if (clickedInteractive) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true); // capture phase
+
+        // Prevent form submissions
+        document.addEventListener('submit', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, true);
+      });
+    </script></body></html>

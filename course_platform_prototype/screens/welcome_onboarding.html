@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta content="width=393, height=852, initial-scale=1.0" name="viewport"><title>welcome_onboarding</title><script src="https://cdn.tailwindcss.com"></script><script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script><style>        :root {            --color-primary: #2563EB;            --color-surface: #FFFFFF;            --color-border: #E5E7EB;            --color-text-main: #0F172A;            --color-text-muted: #64748B;            --color-bg: #F8FAFC;        }        .iphone-frame {            width: 393px;            height: 852px;            background-color: #ffffff;            position: relative;            border-radius: 0px;            box-shadow: 0 0 20px rgba(0,0,0,0.1);            overflow: hidden;            margin: 2rem auto;        }        .custom-shadow {            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);        }    </style></head><body class="bg-gray-100"><div class="iphone-frame flex flex-col bg-[var(--color-bg)]"><!-- #scrollable-content_001 --><div class="flex-1 overflow-y-auto relative"><!-- #hero-image-container_002 --><div class="relative h-[480px] w-full overflow-hidden"><!-- Generation-Info: {"aspectRatio": "16:9", "background": "solid"} --><img alt="Minimalist High-End Photography, A focused professional learner working on a laptop in a bright modern studio with clean aesthetic" class="w-full h-full object-cover" src="https://media.screensdesign.com/afprjsia/7a897001-cd2c-4b52-96e2-68740b7ab4e1.png"><div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-transparent to-transparent"></div></div><!-- /#hero-image-container_002 --><!-- #content-wrapper_003 --><div class="px-8 -mt-20 relative z-10"><!-- #social-proof-pill_004 --><div class="inline-flex items-center gap-2 bg-white border border-[var(--color-border)] rounded-full px-3 py-1.5 custom-shadow mb-6"><div class="flex -space-x-2"><!-- Generation-Info: {"aspectRatio": "1:1", "background": "solid"} --><img alt="Minimalist High-End Photography, Portrait of a smiling young female student with a clean professional look" class="w-6 h-6 rounded-full border-2 border-white object-cover" src="https://media.screensdesign.com/afprjsia/ebaeab1f-52b1-4a41-bb1b-3f7935fb881a.png"><!-- Generation-Info: {"aspectRatio": "1:1", "background": "solid"} --><img alt="Minimalist High-End Photography, Portrait of a confident young male professional in a neutral setting" class="w-6 h-6 rounded-full border-2 border-white object-cover" src="https://media.screensdesign.com/afprjsia/34eda52d-4b17-4e68-82d9-9d0c8207513c.png"><!-- Generation-Info: {"aspectRatio": "1:1", "background": "solid"} --><img alt="Minimalist High-End Photography, Portrait of a successful female educator with a warm approachable expression" class="w-6 h-6 rounded-full border-2 border-white object-cover" src="https://media.screensdesign.com/afprjsia/9e8c824e-4ac2-4960-b285-1077988f3389.png"></div><span class="text-[13px] font-medium text-[var(--color-text-main)]">Join 500k+ learners</span><div class="flex items-center gap-1 ml-1 pl-2 border-l border-[var(--color-border)]"><iconify-icon class="text-yellow-400 text-xs" icon="lucide:star"></iconify-icon><span class="text-[13px] font-bold text-[var(--color-text-main)]">4.9</span></div></div><!-- /#social-proof-pill_004 --><!-- #welcome-header_005 --><h1 class="text-[34px] leading-tight font-bold text-[var(--color-text-main)] tracking-tight mb-4">                    Master new skills at your own pace.                </h1><!-- /#welcome-header_005 --><!-- #welcome-description_006 --><p class="text-[17px] leading-relaxed text-[var(--color-text-muted)] mb-10">                    Access expert-led video lessons, interactive quizzes, and industry-recognized certificates in one calm space.                </p><!-- /#welcome-description_006 --></div><!-- /#content-wrapper_003 --></div><!-- /#scrollable-content_001 --><!-- #fixed-footer_007 --><div class="p-8 bg-[var(--color-bg)] relative z-20"><button class="w-full bg-[var(--color-primary)] text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-all custom-shadow" data-navigates-to="goal_selection_quiz.html" style="; cursor: pointer;">                Get Started            </button><p class="text-center mt-4 text-[13px] text-[var(--color-text-muted)]">                Already have an account? <span class="text-[var(--color-primary)] font-semibold">Log In</span></p></div><!-- /#fixed-footer_007 --></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Collect all navigable elements with their targets
+        const hotspots = [];
+        document.querySelectorAll('[data-navigates-to]').forEach(el => {
+          hotspots.push({
+            element: el,
+            target: el.getAttribute('data-navigates-to'),
+            isScreenTap: el.getAttribute('data-screen-tap') === 'true'
+          });
+        });
+
+        // Document-level capture phase click handler
+        // Checks click position against element bounds - works regardless of z-index stacking
+        document.addEventListener('click', (e) => {
+          const clickX = e.clientX;
+          const clickY = e.clientY;
+
+          // First check screen-tap (tap anywhere) connections
+          const screenTapHotspot = hotspots.find(h => h.isScreenTap);
+          if (screenTapHotspot && screenTapHotspot.target) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = screenTapHotspot.target;
+            return;
+          }
+
+          // Check each hotspot element's bounds
+          for (const hotspot of hotspots) {
+            if (hotspot.isScreenTap) continue; // Already handled above
+            try {
+              const rect = hotspot.element.getBoundingClientRect();
+              if (clickX >= rect.left && clickX <= rect.right &&
+                  clickY >= rect.top && clickY <= rect.bottom) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (hotspot.target) window.location.href = hotspot.target;
+                return;
+              }
+            } catch (err) {
+              // Element might have issues, skip it
+            }
+          }
+
+          // Prevent default for non-connected interactive elements
+          const clickedInteractive = e.target.closest('a, button, [onclick]');
+          if (clickedInteractive) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true); // capture phase
+
+        // Prevent form submissions
+        document.addEventListener('submit', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, true);
+      });
+    </script></body></html>

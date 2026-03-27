@@ -2,7 +2,7 @@ import { ClerkProvider, useAuth } from '@clerk/expo';
 import { AuthView } from '@clerk/expo/native';
 import { tokenCache } from '@clerk/expo/token-cache';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router/stack';
+import { Stack } from 'expo-router';
 import { ActivityIndicator } from 'react-native';
 import "../global.css";
 
@@ -24,9 +24,9 @@ function RootStack() {
   if (!isSignedIn) {
     return <AuthView mode="signInOrUp" />
   }
-
   return (
     <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="onboarding" />
       <Stack.Screen name="(tabs)" />
     </Stack>
   );

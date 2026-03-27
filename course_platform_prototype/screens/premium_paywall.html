@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta content="width=393, height=852, initial-scale=1.0" name="viewport"><title>premium_paywall</title><script src="https://cdn.tailwindcss.com"></script><script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script><style>        :root {            --color-primary: #2563EB;            --color-surface: #FFFFFF;            --color-border: #E5E7EB;            --color-text-main: #0F172A;            --color-text-muted: #64748B;            --color-bg: #FFFFFF;        }        .iphone-frame {            width: 393px;            height: 852px;            background-color: #ffffff;            position: relative;            border-radius: 0px;            box-shadow: 0 0 20px rgba(0,0,0,0.1);            overflow: hidden;            margin: 2rem auto;        }        .custom-shadow {            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);        }    </style></head><body class="bg-gray-100"><div class="iphone-frame flex flex-col bg-[var(--color-bg)]"><!-- #paywall-content_040 --><div class="flex-1 overflow-y-auto"><!-- #hero-header_041 --><div class="relative h-[240px] w-full"><!-- Generation-Info: {"aspectRatio": "16:9", "background": "solid"} --><img alt="Minimalist High-End Photography, A sleek futuristic workspace with multiple screens and elegant lighting, premium feel" class="w-full h-full object-cover" src="https://media.screensdesign.com/gasset/a45ecf22-842e-47a0-a5a7-82ef485c0fda.png"><div class="absolute inset-0 bg-gradient-to-t from-white to-transparent"></div><button class="absolute top-12 right-6 w-8 h-8 rounded-full bg-white/80 flex items-center justify-center backdrop-blur-sm" data-navigates-to="social_proof_testimonials.html" style="; cursor: pointer;"><iconify-icon class="text-xl" icon="lucide:x"></iconify-icon></button></div><div class="px-6 -mt-6 relative z-10"><!-- #fomo-badge_042 --><div class="flex items-center gap-2 bg-red-50 border border-red-100 px-3 py-1.5 rounded-lg mb-6 w-fit mx-auto"><iconify-icon class="text-red-500" icon="lucide:clock"></iconify-icon><span class="text-[13px] font-bold text-red-600">SPRING SALE: 40% OFF ends in 12:45</span></div><h2 class="text-center text-[28px] font-bold text-[var(--color-text-main)] mb-8">Unlock your potential</h2><!-- #feature-list_043 --><div class="space-y-4 mb-10"><div class="flex items-start gap-4"><div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5 shrink-0"><iconify-icon class="text-[var(--color-primary)] text-sm" icon="lucide:check"></iconify-icon></div><p class="text-[16px] text-[var(--color-text-main)] font-medium">Unlimited access to 2,000+ courses</p></div><div class="flex items-start gap-4"><div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5 shrink-0"><iconify-icon class="text-[var(--color-primary)] text-sm" icon="lucide:check"></iconify-icon></div><p class="text-[16px] text-[var(--color-text-main)] font-medium">Official certificates for every path</p></div><div class="flex items-start gap-4"><div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5 shrink-0"><iconify-icon class="text-[var(--color-primary)] text-sm" icon="lucide:check"></iconify-icon></div><p class="text-[16px] text-[var(--color-text-main)] font-medium">Offline mode for learning anywhere</p></div></div><!-- #pricing-cards_044 --><div class="space-y-3"><!-- #annual-plan_045 --><div class="p-4 border-2 border-[var(--color-primary)] bg-blue-50 rounded-2xl flex justify-between items-center relative"><div class="absolute -top-3 right-4 bg-[var(--color-primary)] text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase">                            Best Value                        </div><div><h3 class="font-bold text-[17px]">Annual Access</h3><p class="text-[13px] text-[var(--color-text-muted)]">$99.99/year (Only $8.33/mo)</p></div><div class="text-right"><span class="text-[18px] font-bold text-[var(--color-primary)]">40% OFF</span></div></div><!-- #monthly-plan_046 --><div class="p-4 border border-[var(--color-border)] rounded-2xl flex justify-between items-center"><div><h3 class="font-bold text-[17px]">Monthly Plan</h3><p class="text-[13px] text-[var(--color-text-muted)]">Cancel anytime</p></div><div class="text-right"><span class="text-[18px] font-bold">$19.99/mo</span></div></div></div></div></div><!-- #fixed-footer_047 --><div class="p-8 bg-white border-t border-[var(--color-border)]"><button class="w-full bg-[var(--color-primary)] text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-all custom-shadow mb-4">                Subscribe Now            </button><p class="text-center text-[12px] text-[var(--color-text-muted)] px-4">                Secure payment. No hidden fees. Restore purchases.            </p></div></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Collect all navigable elements with their targets
+        const hotspots = [];
+        document.querySelectorAll('[data-navigates-to]').forEach(el => {
+          hotspots.push({
+            element: el,
+            target: el.getAttribute('data-navigates-to'),
+            isScreenTap: el.getAttribute('data-screen-tap') === 'true'
+          });
+        });
+
+        // Document-level capture phase click handler
+        // Checks click position against element bounds - works regardless of z-index stacking
+        document.addEventListener('click', (e) => {
+          const clickX = e.clientX;
+          const clickY = e.clientY;
+
+          // First check screen-tap (tap anywhere) connections
+          const screenTapHotspot = hotspots.find(h => h.isScreenTap);
+          if (screenTapHotspot && screenTapHotspot.target) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = screenTapHotspot.target;
+            return;
+          }
+
+          // Check each hotspot element's bounds
+          for (const hotspot of hotspots) {
+            if (hotspot.isScreenTap) continue; // Already handled above
+            try {
+              const rect = hotspot.element.getBoundingClientRect();
+              if (clickX >= rect.left && clickX <= rect.right &&
+                  clickY >= rect.top && clickY <= rect.bottom) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (hotspot.target) window.location.href = hotspot.target;
+                return;
+              }
+            } catch (err) {
+              // Element might have issues, skip it
+            }
+          }
+
+          // Prevent default for non-connected interactive elements
+          const clickedInteractive = e.target.closest('a, button, [onclick]');
+          if (clickedInteractive) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true); // capture phase
+
+        // Prevent form submissions
+        document.addEventListener('submit', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, true);
+      });
+    </script></body></html>

@@ -2,6 +2,16 @@
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css";
 
+/* Onboarding design tokens */
+@theme {
+  --color-primary: #2563EB;
+  --color-text-main: #0F172A;
+  --color-text-muted: #64748B;
+  --color-surface: #FFFFFF;
+  --color-bg: #F8FAFC;
+  --color-border: #E5E7EB;
+}
+
 /* Platform-specific font families */
 @media android {
   :root {

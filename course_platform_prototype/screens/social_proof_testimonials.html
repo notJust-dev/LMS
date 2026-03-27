@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta content="width=393, height=852, initial-scale=1.0" name="viewport"><title>social_proof_testimonials</title><script src="https://cdn.tailwindcss.com"></script><script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script><style>        :root {            --color-primary: #2563EB;            --color-surface: #FFFFFF;            --color-border: #E5E7EB;            --color-text-main: #0F172A;            --color-text-muted: #64748B;            --color-bg: #FFFFFF;        }        .iphone-frame {            width: 393px;            height: 852px;            background-color: #ffffff;            position: relative;            border-radius: 0px;            box-shadow: 0 0 20px rgba(0,0,0,0.1);            overflow: hidden;            margin: 2rem auto;        }        .custom-shadow {            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);        }    </style></head><body class="bg-gray-100"><div class="iphone-frame flex flex-col bg-[var(--color-bg)]"><!-- #header-nav_030 --><div class="px-6 pt-12 pb-6 flex items-center justify-between"><button class="w-10 h-10 flex items-center justify-center border border-[var(--color-border)] rounded-xl active:scale-90" data-navigates-to="educational_insight.html" style="; cursor: pointer;"><iconify-icon class="text-[var(--color-text-main)] text-xl" icon="lucide:chevron-left"></iconify-icon></button><div class="flex-1 mx-8"><div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-[var(--color-primary)] w-[66.6%]"></div></div></div><span class="text-[13px] font-semibold text-[var(--color-text-muted)] w-10 text-right">4/6</span></div><!-- /#header-nav_030 --><!-- #social-proof-content_031 --><div class="flex-1 overflow-y-auto px-6"><div class="mb-8 mt-4"><h2 class="text-[28px] font-bold text-[var(--color-text-main)] leading-tight mb-3">Loved by thousands</h2><p class="text-[16px] text-[var(--color-text-muted)]">Hear from real students who transformed their careers with us.</p></div><!-- #testimonials-list_032 --><div class="space-y-4 pb-6"><!-- #testimonial-1_033 --><div class="p-6 border border-[var(--color-border)] rounded-2xl bg-[var(--color-bg)] custom-shadow"><div class="flex items-center gap-1 mb-3"><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon></div><p class="text-[16px] text-[var(--color-text-main)] italic leading-relaxed mb-4">"The UI/UX course was a game-changer. I landed my first design job just 2 months after finishing the curriculum."</p><div class="flex items-center gap-3"><!-- Generation-Info: {"aspectRatio": "1:1", "background": "solid"} --><img alt="Minimalist High-End Photography, Portrait of a smiling young female designer with glasses in a professional studio setting" class="w-10 h-10 rounded-full object-cover" src="https://media.screensdesign.com/gasset/e47929ea-7803-4c29-98a6-f360a76707dc.png"><div><p class="text-[14px] font-bold text-[var(--color-text-main)]">Sarah Jenkins</p><p class="text-[12px] text-[var(--color-text-muted)]">Junior Product Designer</p></div></div></div><!-- /#testimonial-1_033 --><!-- #testimonial-2_034 --><div class="p-6 border border-[var(--color-border)] rounded-2xl bg-[var(--color-bg)]"><div class="flex items-center gap-1 mb-3"><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon><iconify-icon class="text-yellow-400" icon="lucide:star"></iconify-icon></div><p class="text-[16px] text-[var(--color-text-main)] italic leading-relaxed mb-4">"Incredible depth in the Python for Data Science module. The interactive quizzes really helped me practice."</p><div class="flex items-center gap-3"><!-- Generation-Info: {"aspectRatio": "1:1", "background": "solid"} --><img alt="Minimalist High-End Photography, Portrait of a confident mid-30s male professional in a clean modern office" class="w-10 h-10 rounded-full object-cover" src="https://media.screensdesign.com/gasset/26767b1b-aef3-4fe5-be48-682a2d36f1c3.png"><div><p class="text-[14px] font-bold text-[var(--color-text-main)]">Marcus Zhao</p><p class="text-[12px] text-[var(--color-text-muted)]">Data Analyst</p></div></div></div><!-- /#testimonial-2_034 --></div><!-- /#testimonials-list_032 --></div><!-- /#social-proof-content_031 --><!-- #fixed-footer_035 --><div class="p-8 bg-white border-t border-[var(--color-border)]"><button class="w-full bg-[var(--color-primary)] text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-all custom-shadow" data-navigates-to="premium_paywall.html" style="; cursor: pointer;">                Next            </button></div><!-- /#fixed-footer_035 --></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Collect all navigable elements with their targets
+        const hotspots = [];
+        document.querySelectorAll('[data-navigates-to]').forEach(el => {
+          hotspots.push({
+            element: el,
+            target: el.getAttribute('data-navigates-to'),
+            isScreenTap: el.getAttribute('data-screen-tap') === 'true'
+          });
+        });
+
+        // Document-level capture phase click handler
+        // Checks click position against element bounds - works regardless of z-index stacking
+        document.addEventListener('click', (e) => {
+          const clickX = e.clientX;
+          const clickY = e.clientY;
+
+          // First check screen-tap (tap anywhere) connections
+          const screenTapHotspot = hotspots.find(h => h.isScreenTap);
+          if (screenTapHotspot && screenTapHotspot.target) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = screenTapHotspot.target;
+            return;
+          }
+
+          // Check each hotspot element's bounds
+          for (const hotspot of hotspots) {
+            if (hotspot.isScreenTap) continue; // Already handled above
+            try {
+              const rect = hotspot.element.getBoundingClientRect();
+              if (clickX >= rect.left && clickX <= rect.right &&
+                  clickY >= rect.top && clickY <= rect.bottom) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (hotspot.target) window.location.href = hotspot.target;
+                return;
+              }
+            } catch (err) {
+              // Element might have issues, skip it
+            }
+          }
+
+          // Prevent default for non-connected interactive elements
+          const clickedInteractive = e.target.closest('a, button, [onclick]');
+          if (clickedInteractive) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true); // capture phase
+
+        // Prevent form submissions
+        document.addEventListener('submit', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }, true);
+      });
+    </script></body></html>
