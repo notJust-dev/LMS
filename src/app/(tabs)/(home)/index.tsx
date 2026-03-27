@@ -1,6 +1,7 @@
 import { ScrollView, Text, View, Pressable } from '@/tw';
 import { Image } from '@/tw/image';
 import { useUser } from '@clerk/expo';
+import { useRouter } from 'expo-router';
 import { useCourses } from '@/services/courses';
 import {
   Flame,
@@ -49,7 +50,7 @@ function TopBar() {
             {streakDays}
           </Text>
         </View>
-        <Pressable className="w-10 h-10 items-center justify-center bg-white border border-border rounded-xl active:scale-95">
+        <Pressable className="w-10 h-10 items-center justify-center bg-white border border-border rounded-xl active:scale-[0.95]">
           <Bell size={20} color="#0F172A" />
         </Pressable>
       </View>
@@ -111,8 +112,13 @@ function HeroContinueCard() {
 }
 
 function CourseCard({ course }: { course: Tables<'courses'> }) {
+  const router = useRouter();
+
   return (
-    <Pressable className="w-[240px] bg-white border border-border rounded-2xl overflow-hidden active:scale-[0.98]">
+    <Pressable
+      className="w-[240px] bg-white border border-border rounded-2xl overflow-hidden active:scale-[0.98]"
+      onPress={() => router.push(`/course/${course.id}`)}
+    >
       <View className="h-[140px] relative">
         <Image
           source={course.image_url ?? 'https://via.placeholder.com/240x140'}
