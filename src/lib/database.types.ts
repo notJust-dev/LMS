@@ -1,4 +1,3 @@
-Connecting to db 5432
 export type Json =
   | string
   | number
@@ -35,6 +34,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      chapters: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           category: string | null
@@ -44,8 +78,13 @@ export type Database = {
           image_url: string | null
           instructor_id: string
           is_published: boolean
+          lesson_count: number
+          original_price: number | null
           price: number
+          rating: number
+          review_count: number
           title: string
+          total_duration: number
           updated_at: string
         }
         Insert: {
@@ -56,8 +95,13 @@ export type Database = {
           image_url?: string | null
           instructor_id: string
           is_published?: boolean
+          lesson_count?: number
+          original_price?: number | null
           price?: number
+          rating?: number
+          review_count?: number
           title: string
+          total_duration?: number
           updated_at?: string
         }
         Update: {
@@ -68,38 +112,238 @@ export type Database = {
           image_url?: string | null
           instructor_id?: string
           is_published?: boolean
+          lesson_count?: number
+          original_price?: number | null
           price?: number
+          rating?: number
+          review_count?: number
           title?: string
+          total_duration?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "courses_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enrollments: {
+        Row: {
+          course_id: string
+          enrolled_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          enrolled_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          enrolled_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          lesson_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          lesson_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_resources: {
+        Row: {
+          created_at: string
+          download_url: string
+          file_name: string
+          file_size: number
+          file_type: string
+          id: string
+          lesson_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          download_url: string
+          file_name: string
+          file_size?: number
+          file_type: string
+          id?: string
+          lesson_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          download_url?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          lesson_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_resources_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          description: string | null
+          duration: number
+          id: string
+          is_locked: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          description?: string | null
+          duration?: number
+          id?: string
+          is_locked?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          description?: string | null
+          duration?: number
+          id?: string
+          is_locked?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          certificates_earned: number
+          company: string | null
           created_at: string
           id: string
           interests: string[]
           name: string | null
           onboarding_completed: boolean
           onboarding_goal: string | null
+          role: string | null
+          streak_days: number
+          total_lessons_completed: number
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
+          certificates_earned?: number
+          company?: string | null
           created_at?: string
           id: string
           interests?: string[]
           name?: string | null
           onboarding_completed?: boolean
           onboarding_goal?: string | null
+          role?: string | null
+          streak_days?: number
+          total_lessons_completed?: number
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
+          certificates_earned?: number
+          company?: string | null
           created_at?: string
           id?: string
           interests?: string[]
           name?: string | null
           onboarding_completed?: boolean
           onboarding_goal?: string | null
+          role?: string | null
+          streak_days?: number
+          total_lessons_completed?: number
           updated_at?: string
         }
         Relationships: []

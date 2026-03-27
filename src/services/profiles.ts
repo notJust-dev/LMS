@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabase } from '@/lib/supabase';
+import { useUser } from '@clerk/expo';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const profileKeys = {
   me: ['profile', 'me'] as const,
@@ -7,6 +8,7 @@ export const profileKeys = {
 
 export function useProfile() {
   const supabase = useSupabase();
+  const { user } = useUser();
 
   return useQuery({
     queryKey: profileKeys.me,
@@ -14,10 +16,14 @@ export function useProfile() {
       const { data, error } = await supabase
         .from('profiles')
         .select()
+        .eq('id', user?.id)
         .maybeSingle();
+
+      console.log(data, error);
       if (error) throw error;
       return data;
     },
+    enabled: !!user?.id,
   });
 }
 
@@ -34,10 +40,15 @@ export function useCreateProfile() {
       onboarding_completed: boolean;
     }) => {
       const { error } = await supabase.from('profiles').insert(profile);
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: profileKeys.me });
+    },
+    onError: (err) => {
+      console.log(err);
     },
   });
 }
