@@ -1,8 +1,10 @@
 import { formatDuration, formatPrice } from '@/lib/format';
 import { useCourse, type CourseDetail } from '@/services/courses';
+import { useEnroll, useIsEnrolled } from '@/services/enrollments';
 import { Pressable, ScrollView, Text, View } from '@/tw';
 import { Image } from '@/tw/image';
-import { useLocalSearchParams } from 'expo-router';
+import { useAuth } from '@clerk/expo';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Stack } from 'expo-router/stack';
 import {
   ChevronDown,
@@ -74,6 +76,11 @@ function Chapter({
 export default function CourseDetailsScreen() {
   const { course_id } = useLocalSearchParams<{ course_id: string }>();
   const { data: course, isLoading } = useCourse(course_id);
+  const { data: isEnrolled, isLoading: enrollLoading } =
+    useIsEnrolled(course_id);
+  const enroll = useEnroll();
+  const { userId } = useAuth();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [expandedChapter, setExpandedChapter] = useState<string | null>(null);
 
@@ -229,29 +236,57 @@ export default function CourseDetailsScreen() {
         className="px-8 bg-white border-t border-border"
         style={{ paddingTop: 16, paddingBottom: insets.bottom + 16 }}
       >
-        <View className="flex-row items-center justify-between mb-4">
-          <View>
-            <Text className="text-[12px] text-text-muted">Full Access</Text>
-            <Text className="text-[24px] font-bold text-text-main">
-              {course.price === 0 ? 'Free' : formatPrice(course.price)}
+        {isEnrolled ? (
+          <Pressable
+            onPress={() => {
+              const firstLesson = chapters[0]?.lessons?.[0];
+              if (firstLesson) {
+                router.push(`/course/${course_id}/lesson/${firstLesson.id}`);
+              }
+            }}
+            className="w-full bg-primary py-4 rounded-2xl active:scale-[0.98] items-center shadow-sm"
+          >
+            <Text className="text-white font-bold text-[16px]">
+              Start Lesson
             </Text>
-          </View>
-          {discount != null && (
-            <View className="items-end">
-              <Text className="line-through text-[14px] text-text-muted">
-                {formatPrice(course.original_price!)}
-              </Text>
-              <Text className="text-[12px] font-bold text-green-600">
-                Save {discount}%
-              </Text>
+          </Pressable>
+        ) : (
+          <>
+            <View className="flex-row items-center justify-between mb-4">
+              <View>
+                <Text className="text-[12px] text-text-muted">
+                  Full Access
+                </Text>
+                <Text className="text-[24px] font-bold text-text-main">
+                  {course.price === 0 ? 'Free' : formatPrice(course.price)}
+                </Text>
+              </View>
+              {discount != null && (
+                <View className="items-end">
+                  <Text className="line-through text-[14px] text-text-muted">
+                    {formatPrice(course.original_price!)}
+                  </Text>
+                  <Text className="text-[12px] font-bold text-green-600">
+                    Save {discount}%
+                  </Text>
+                </View>
+              )}
             </View>
-          )}
-        </View>
-        <Pressable className="w-full bg-primary py-4 rounded-2xl active:scale-[0.98] items-center shadow-sm">
-          <Text className="text-white font-bold text-[16px]">
-            Enroll in Course
-          </Text>
-        </Pressable>
+            <Pressable
+              onPress={() => {
+                if (userId) {
+                  enroll.mutate({ userId, courseId: course_id });
+                }
+              }}
+              disabled={enroll.isPending || enrollLoading}
+              className="w-full bg-primary py-4 rounded-2xl active:scale-[0.98] items-center shadow-sm"
+            >
+              <Text className="text-white font-bold text-[16px]">
+                {enroll.isPending ? 'Enrolling...' : 'Enroll in Course'}
+              </Text>
+            </Pressable>
+          </>
+        )}
       </View>
     </View>
   );

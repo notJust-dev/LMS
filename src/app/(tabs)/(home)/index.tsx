@@ -1,8 +1,13 @@
+import { formatDuration } from '@/lib/format';
+import { useCourses, type CourseWithInstructor } from '@/services/courses';
+import {
+  useMyEnrollments,
+  type EnrollmentWithCourse,
+} from '@/services/enrollments';
 import { ScrollView, Text, View, Pressable } from '@/tw';
 import { Image } from '@/tw/image';
 import { useUser } from '@clerk/expo';
 import { useRouter } from 'expo-router';
-import { useCourses } from '@/services/courses';
 import {
   Flame,
   Bell,
@@ -11,9 +16,8 @@ import {
   Clock,
   Award,
   CheckCircle,
+  BookOpen,
 } from 'lucide-react-native';
-import { formatDuration } from '@/lib/format';
-import type { CourseWithInstructor } from '@/services/courses';
 import { FlatList } from 'react-native';
 
 function getGreeting() {
@@ -179,6 +183,71 @@ function RecommendedSection() {
   );
 }
 
+function EnrolledCourseCard({
+  enrollment,
+}: {
+  enrollment: EnrollmentWithCourse;
+}) {
+  const router = useRouter();
+  const course = enrollment.course;
+  if (!course) return null;
+
+  return (
+    <Pressable
+      className="w-[240px] bg-white border border-border rounded-2xl overflow-hidden active:scale-[0.98]"
+      onPress={() => router.push(`/course/${course.id}`)}
+    >
+      <View className="h-[140px] relative">
+        <Image
+          source={course.image_url ?? 'https://via.placeholder.com/240x140'}
+          className="w-full h-full object-cover"
+        />
+        <View className="absolute top-3 left-3 bg-primary px-2.5 py-1 rounded-lg">
+          <Text className="text-[11px] font-bold text-white">Enrolled</Text>
+        </View>
+      </View>
+      <View className="p-4">
+        <Text
+          className="text-[15px] font-bold text-text-main mb-2"
+          numberOfLines={2}
+        >
+          {course.title}
+        </Text>
+        <View className="flex-row items-center gap-2">
+          <BookOpen size={14} color="#64748B" />
+          <Text className="text-[12px] text-text-muted">
+            {course.lesson_count} lessons
+          </Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
+function MyCoursesSection() {
+  const { data: enrollments } = useMyEnrollments();
+
+  if (!enrollments || enrollments.length === 0) return null;
+
+  return (
+    <View className="mt-10">
+      <View className="px-6 mb-4 flex-row items-center justify-between">
+        <Text className="text-[18px] font-bold text-text-main">
+          My Courses
+        </Text>
+      </View>
+      <FlatList
+        data={enrollments}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 24, gap: 16 }}
+        renderItem={({ item }) => <EnrolledCourseCard enrollment={item} />}
+      />
+    </View>
+  );
+}
+
 function LearningStats() {
   return (
     <View className="px-6 mt-8 mb-8">
@@ -206,6 +275,7 @@ export default function HomeScreen() {
     >
       <TopBar />
       <HeroContinueCard />
+      <MyCoursesSection />
       <RecommendedSection />
       <LearningStats />
     </ScrollView>
