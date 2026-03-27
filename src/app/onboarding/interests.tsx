@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, PenTool, Code, Megaphone, TrendingUp, Database, Camera } from 'lucide-react-native';
 import { View, Text, Pressable, ScrollView } from '@/tw';
+import { useOnboarding } from '@/providers/onboarding-context';
 
 const INTERESTS = [
   { id: 'design', icon: PenTool, label: 'UI/UX Design' },
@@ -14,16 +14,7 @@ const INTERESTS = [
 
 export default function InterestsScreen() {
   const router = useRouter();
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-
-  function toggle(id: string) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
+  const { interests: selected, toggleInterest: toggle } = useOnboarding();
 
   return (
     <View className="flex-1 bg-white">

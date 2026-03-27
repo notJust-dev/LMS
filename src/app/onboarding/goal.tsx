@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Briefcase, GraduationCap, Palette, Award, CheckCircle } from 'lucide-react-native';
 import { View, Text, Pressable, ScrollView } from '@/tw';
+import { useOnboarding } from '@/providers/onboarding-context';
 
 const GOALS = [
   { id: 'career', icon: Briefcase, title: 'Career Advancement', desc: 'Get promoted or learn new job skills' },
@@ -12,7 +12,7 @@ const GOALS = [
 
 export default function GoalScreen() {
   const router = useRouter();
-  const [selected, setSelected] = useState<string | null>(null);
+  const { goal: selected, setGoal: setSelected } = useOnboarding();
 
   return (
     <View className="flex-1 bg-white">

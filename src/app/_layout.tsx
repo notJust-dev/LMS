@@ -3,6 +3,7 @@ import { tokenCache } from '@clerk/expo/token-cache';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import "../global.css";
+import { useProfile } from '@/services/profiles';
 
 const queryClient = new QueryClient();
 
@@ -14,8 +15,9 @@ if (!publishableKey) {
 
 function RootStack() {
   const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
+  const { data: profile, isLoading: profileLoading } = useProfile();
 
-  const isOnboarded = false;
+  const isOnboarded = !!profile;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -24,7 +26,7 @@ function RootStack() {
         <Stack.Screen name="(auth)/login" />
       </Stack.Protected>
 
-      <Stack.Protected guard={!!isSignedIn && isLoaded}>
+      <Stack.Protected guard={!!isSignedIn && isLoaded && !profileLoading}>
         <Stack.Protected guard={!isOnboarded}>
           <Stack.Screen name="onboarding" />
         </Stack.Protected>

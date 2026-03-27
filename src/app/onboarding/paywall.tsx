@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import { useUser } from '@clerk/expo';
 import { X, Clock, Check } from 'lucide-react-native';
 import { View, Text, Pressable, ScrollView } from '@/tw';
 import { Image } from '@/tw/image';
+import { useOnboarding } from '@/providers/onboarding-context';
+import { useCreateProfile } from '@/services/profiles';
 
 const paywallHero = require('@/assets/images/onboarding/paywall-hero.png');
 
@@ -29,8 +32,25 @@ function useCountdown(minutes: number) {
 
 export default function PaywallScreen() {
   const router = useRouter();
+  const { user } = useUser();
+  const { goal, interests } = useOnboarding();
+  const createProfile = useCreateProfile();
   const countdown = useCountdown(12);
   const [plan, setPlan] = useState<'annual' | 'monthly'>('annual');
+
+  function handleSubscribe() {
+    if (!user) return;
+    createProfile.mutate(
+      {
+        id: user.id,
+        name: user.fullName,
+        onboarding_goal: goal,
+        interests: [...interests],
+        onboarding_completed: true,
+      },
+      { onSuccess: () => router.replace('/(tabs)/(home)') },
+    );
+  }
 
   return (
     <View className="flex-1 bg-white">
@@ -114,7 +134,8 @@ export default function PaywallScreen() {
       {/* Footer */}
       <View className="p-8 bg-white border-t border-border">
         <Pressable
-          onPress={() => router.replace('/(tabs)/(home)')}
+          onPress={handleSubscribe}
+          disabled={createProfile.isPending}
           className="w-full bg-primary py-4 rounded-2xl items-center active:scale-[0.98] mb-4"
         >
           <Text className="text-white font-semibold text-base">Subscribe Now</Text>

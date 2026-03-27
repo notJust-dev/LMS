@@ -19,6 +19,10 @@ LMS (Learning Management System) — a React Native / Expo mobile app using file
 
 - **Expo SDK 55** with React Native 0.83, React 19, TypeScript 5.9
 - **File-based routing** via `expo-router` — routes live in `src/app/`
+- **`src/app/` is screens and layouts only** — never put contexts, hooks, helpers, or other non-route files in the `app/` directory
+- **Providers/contexts** go in `src/providers/`
+- **Data hooks** go in `src/services/`
+- **Utilities and shared logic** go in `src/lib/`
 - **Path aliases:** `@/*` maps to `./src/*`, `@/assets/*` maps to `./assets/*`
 - **React Compiler** is enabled (`experiments.reactCompiler: true` in app.json)
 - **Typed routes** are enabled (`experiments.typedRoutes: true`)
