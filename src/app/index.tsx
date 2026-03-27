@@ -59,14 +59,11 @@ export default function WelcomeScreen() {
       {/* Footer */}
       <View className="p-8 bg-bg mt-auto">
         <Pressable
-          onPress={() => router.push('/onboarding/goal')}
+          onPress={() => router.push('/login')}
           className="w-full bg-primary py-4 rounded-2xl items-center active:scale-[0.98]"
         >
           <Text className="text-white font-semibold text-base">Get Started</Text>
         </Pressable>
-        <Text className="text-center mt-4 text-[13px] text-text-muted">
-          Already have an account? <Text className="text-primary font-semibold">Log In</Text>
-        </Text>
       </View>
     </View>
   );

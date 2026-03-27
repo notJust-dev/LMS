@@ -1,9 +1,7 @@
 import { ClerkProvider, useAuth } from '@clerk/expo';
-import { AuthView } from '@clerk/expo/native';
 import { tokenCache } from '@clerk/expo/token-cache';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
-import { ActivityIndicator } from 'react-native';
 import "../global.css";
 
 const queryClient = new QueryClient();
@@ -17,17 +15,23 @@ if (!publishableKey) {
 function RootStack() {
   const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
 
-  if (!isLoaded) {
-    return <ActivityIndicator size="large" />
-  }
+  const isOnboarded = false;
 
-  if (!isSignedIn) {
-    return <AuthView mode="signInOrUp" />
-  }
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="onboarding" />
-      <Stack.Screen name="(tabs)" />
+      <Stack.Protected guard={!isSignedIn && isLoaded}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)/login" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!!isSignedIn && isLoaded}>
+        <Stack.Protected guard={!isOnboarded}>
+          <Stack.Screen name="onboarding" />
+        </Stack.Protected>
+        <Stack.Protected guard={isOnboarded}>
+          <Stack.Screen name="(tabs)" />
+        </Stack.Protected>
+      </Stack.Protected>
     </Stack>
   );
 }
