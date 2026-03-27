@@ -13,7 +13,7 @@ export default function SearchLayout() {
         headerBackButtonDisplayMode: 'minimal',
       }}
     >
-      <Stack.Screen name="search" options={{ title: 'Search' }} />
+      <Stack.Screen name="search" options={{ title: 'Explore' }} />
     </Stack>
   );
 }
