@@ -1,7 +1,14 @@
-import { useCourse, useUpdateCourse } from '@/services/courses';
+import {
+  useCourse,
+  useUpdateCourse,
+  useUploadCourseImage,
+} from '@/services/courses';
 import { Pressable, ScrollView, Text, TextInput, View } from '@/tw';
+import { Image } from '@/tw/image';
+import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Stack } from 'expo-router/stack';
+import { Camera, Upload } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -25,6 +32,7 @@ export default function EditCourseScreen() {
   const router = useRouter();
   const { data: course, isLoading } = useCourse(course_id);
   const updateCourse = useUpdateCourse(course_id);
+  const uploadImage = useUploadCourseImage();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -84,6 +92,41 @@ export default function EditCourseScreen() {
     );
   }
 
+  async function handlePickImage() {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.8,
+    });
+
+    if (result.canceled || !result.assets[0]) return;
+
+    const asset = result.assets[0];
+
+    uploadImage.mutate(
+      {
+        courseId: course_id,
+        file: {
+          uri: asset.uri,
+          type: asset.mimeType ?? 'image/jpeg',
+        },
+      },
+      {
+        onSuccess: (publicUrl) => {
+          updateCourse.mutate(
+            { image_url: publicUrl },
+            {
+              onSuccess: () => Alert.alert('Success', 'Image uploaded.'),
+              onError: (err) => Alert.alert('Error', err.message),
+            }
+          );
+        },
+        onError: (err) => Alert.alert('Upload Error', err.message),
+      }
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white"
@@ -96,6 +139,46 @@ export default function EditCourseScreen() {
         contentContainerClassName="px-6 pt-4 pb-24"
         keyboardShouldPersistTaps="handled"
       >
+        {/* Course Image */}
+        <View className="mb-6">
+          <Text className="text-[14px] font-semibold text-text-main mb-2">
+            Course Image
+          </Text>
+          {course.image_url ? (
+            <View className="rounded-xl overflow-hidden mb-3">
+              <Image
+                source={course.image_url}
+                className="w-full aspect-video object-cover"
+              />
+            </View>
+          ) : (
+            <View className="aspect-video bg-gray-100 rounded-xl items-center justify-center mb-3">
+              <Camera size={32} color="#d1d5db" />
+              <Text className="text-[13px] text-text-muted mt-2">
+                No image uploaded
+              </Text>
+            </View>
+          )}
+          <Pressable
+            onPress={handlePickImage}
+            disabled={uploadImage.isPending}
+            className="flex-row items-center justify-center gap-2 py-3 border border-primary rounded-xl active:opacity-80"
+          >
+            {uploadImage.isPending ? (
+              <ActivityIndicator size="small" color="#2563EB" />
+            ) : (
+              <Upload size={18} color="#2563EB" />
+            )}
+            <Text className="text-primary font-semibold text-[14px]">
+              {uploadImage.isPending
+                ? 'Uploading...'
+                : course.image_url
+                  ? 'Change Image'
+                  : 'Upload Image'}
+            </Text>
+          </Pressable>
+        </View>
+
         {/* Title */}
         <View className="mb-5">
           <Text className="text-[14px] font-semibold text-text-main mb-2">

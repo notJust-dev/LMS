@@ -61,7 +61,10 @@ create policy "Chapters of published courses are viewable by everyone"
     exists (
       select 1 from public.courses
       where courses.id = chapters.course_id
-        and courses.is_published = true
+        and (
+          courses.is_published = true
+          or courses.instructor_id = (auth.jwt() ->> 'sub')
+        )
     )
   );
 
@@ -128,7 +131,10 @@ create policy "Lessons of published courses are viewable by everyone"
       select 1 from public.chapters
       join public.courses on courses.id = chapters.course_id
       where chapters.id = lessons.chapter_id
-        and courses.is_published = true
+        and (
+          courses.is_published = true
+          or courses.instructor_id = (auth.jwt() ->> 'sub')
+        )
     )
   );
 
@@ -197,7 +203,10 @@ create policy "Resources of published courses are viewable by everyone"
       join public.chapters on chapters.id = lessons.chapter_id
       join public.courses on courses.id = chapters.course_id
       where lessons.id = lesson_resources.lesson_id
-        and courses.is_published = true
+        and (
+          courses.is_published = true
+          or courses.instructor_id = (auth.jwt() ->> 'sub')
+        )
     )
   );
 

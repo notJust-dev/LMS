@@ -113,6 +113,7 @@ export function useUpdateCourse(id: string) {
       price?: number;
       original_price?: number | null;
       is_published?: boolean;
+      image_url?: string | null;
     }) => {
       const { data } = await supabase
         .from('courses')
@@ -127,6 +128,38 @@ export function useUpdateCourse(id: string) {
       queryClient.invalidateQueries({ queryKey: coursesKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: coursesKeys.tutor(userId!) });
       queryClient.invalidateQueries({ queryKey: coursesKeys.all });
+    },
+  });
+}
+
+export function useUploadCourseImage() {
+  const supabase = useSupabase();
+
+  return useMutation({
+    mutationFn: async ({
+      courseId,
+      file,
+    }: {
+      courseId: string;
+      file: { uri: string; type: string };
+    }) => {
+      const response = await fetch(file.uri);
+      const blob = await response.blob();
+      const ext = file.type.split('/')[1] ?? 'jpg';
+      const path = `${courseId}.${ext}`;
+
+      const { error } = await supabase.storage
+        .from('course-images')
+        .upload(path, blob, {
+          contentType: file.type,
+          upsert: true,
+        });
+      if (error) throw error;
+
+      const { data } = supabase.storage
+        .from('course-images')
+        .getPublicUrl(path);
+      return data.publicUrl;
     },
   });
 }

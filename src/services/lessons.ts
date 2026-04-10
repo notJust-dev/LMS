@@ -1,5 +1,6 @@
 import { useSupabase } from '@/lib/supabase';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { coursesKeys } from './courses';
 
 export const lessonsKeys = {
   detail: (id: string) => ['lessons', id] as const,
@@ -23,6 +24,109 @@ export function useLesson(id: string) {
 }
 
 export type LessonDetail = NonNullable<ReturnType<typeof useLesson>['data']>;
+
+export function useCreateLesson(courseId: string) {
+  const supabase = useSupabase();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      chapter_id: string;
+      title: string;
+      sort_order: number;
+    }) => {
+      const { data } = await supabase
+        .from('lessons')
+        .insert(input)
+        .select()
+        .single()
+        .throwOnError();
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: coursesKeys.detail(courseId) });
+    },
+  });
+}
+
+export function useUpdateLesson(courseId: string) {
+  const supabase = useSupabase();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...updates
+    }: {
+      id: string;
+      title?: string;
+      description?: string | null;
+      duration?: number;
+      is_locked?: boolean;
+      video_url?: string | null;
+    }) => {
+      const { data } = await supabase
+        .from('lessons')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+        .throwOnError();
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: coursesKeys.detail(courseId) });
+      queryClient.invalidateQueries({
+        queryKey: lessonsKeys.detail(variables.id),
+      });
+    },
+  });
+}
+
+export function useUploadLessonVideo() {
+  const supabase = useSupabase();
+
+  return useMutation({
+    mutationFn: async ({
+      lessonId,
+      file,
+    }: {
+      lessonId: string;
+      file: { uri: string; type: string; name: string };
+    }) => {
+      const response = await fetch(file.uri);
+      const blob = await response.blob();
+      const path = `${lessonId}.mp4`;
+
+      const { error } = await supabase.storage
+        .from('lesson-videos')
+        .upload(path, blob, {
+          contentType: file.type,
+          upsert: true,
+        });
+      if (error) throw error;
+      return path;
+    },
+  });
+}
+
+export function useDeleteLesson(courseId: string) {
+  const supabase = useSupabase();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (lessonId: string) => {
+      await supabase
+        .from('lessons')
+        .delete()
+        .eq('id', lessonId)
+        .throwOnError();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: coursesKeys.detail(courseId) });
+    },
+  });
+}
 
 /**
  * Returns a signed URL for a lesson video (valid for 1 hour).
