@@ -72,6 +72,34 @@ export type TutorCourse = NonNullable<
   ReturnType<typeof useTutorCourses>['data']
 >[number];
 
+export function useCreateCourse() {
+  const supabase = useSupabase();
+  const { userId } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (course: {
+      title: string;
+      description: string;
+      category: string;
+      price: number;
+      original_price?: number | null;
+    }) => {
+      const { data } = await supabase
+        .from('courses')
+        .insert({ ...course, instructor_id: userId! })
+        .select()
+        .single()
+        .throwOnError();
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: coursesKeys.tutor(userId!) });
+      queryClient.invalidateQueries({ queryKey: coursesKeys.all });
+    },
+  });
+}
+
 export function useDeleteCourse() {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
