@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabase } from '@/lib/supabase';
+import { useAuth } from '@clerk/expo';
 
 export const coursesKeys = {
   all: ['courses'] as const,
   detail: (id: string) => ['courses', id] as const,
+  tutor: (instructorId: string) => ['courses', 'tutor', instructorId] as const,
 };
 
 export function useCourses() {
@@ -46,6 +48,29 @@ export function useCourse(id: string) {
 }
 
 export type CourseDetail = NonNullable<ReturnType<typeof useCourse>['data']>;
+
+export function useTutorCourses() {
+  const supabase = useSupabase();
+  const { userId } = useAuth();
+
+  return useQuery({
+    queryKey: coursesKeys.tutor(userId ?? ''),
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('instructor_id', userId!)
+        .order('updated_at', { ascending: false })
+        .throwOnError();
+      return data;
+    },
+  });
+}
+
+export type TutorCourse = NonNullable<
+  ReturnType<typeof useTutorCourses>['data']
+>[number];
 
 export function useDeleteCourse() {
   const supabase = useSupabase();
