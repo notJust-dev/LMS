@@ -1,12 +1,14 @@
 import { useClerk, useUser, useUserProfileModal } from '@clerk/expo';
-import { UserButton } from '@clerk/expo/native';
 import { ScrollView, View, Text, Pressable } from '@/tw';
 import { Image } from '@/tw/image';
+import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
   const { user } = useUser();
   const { signOut } = useClerk();
   const { presentUserProfile } = useUserProfileModal();
+  const router = useRouter();
+  const isTutor = user?.publicMetadata?.role === 'tutor';
 
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic" className="flex-1">
@@ -24,6 +26,12 @@ export default function ProfileScreen() {
             </Text>
           </View>
         </View>
+
+        {isTutor && (
+          <Pressable className="bg-primary p-4 rounded-xl items-center active:opacity-80" style={{ borderCurve: 'continuous' }} onPress={() => router.push('/tutor')}>
+            <Text className="text-white text-base font-semibold">Manage Courses</Text>
+          </Pressable>
+        )}
 
         <Pressable className="bg-blue-500 p-4 rounded-xl items-center active:opacity-80" style={{ borderCurve: 'continuous' }} onPress={presentUserProfile}>
           <Text className="text-white text-base font-semibold">Manage Profile</Text>

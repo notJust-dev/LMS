@@ -1,9 +1,9 @@
-import { ClerkProvider, useAuth } from '@clerk/expo';
+import { useProfile } from '@/services/profiles';
+import { ClerkProvider, useAuth, useUser } from '@clerk/expo';
 import { tokenCache } from '@clerk/expo/token-cache';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import "../global.css";
-import { useProfile } from '@/services/profiles';
 
 const queryClient = new QueryClient();
 
@@ -15,9 +15,11 @@ if (!publishableKey) {
 
 function RootStack() {
   const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
+  const { user } = useUser();
   const { data: profile, isLoading: profileLoading } = useProfile();
 
   const isOnboarded = !!profile;
+  const isTutor = user?.publicMetadata?.role === 'tutor';
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -36,6 +38,10 @@ function RootStack() {
             name="course/[course_id]"
             options={{ headerShown: false }}
           />
+
+          <Stack.Protected guard={isTutor}>
+            <Stack.Screen name="tutor" />
+          </Stack.Protected>
         </Stack.Protected>
       </Stack.Protected>
     </Stack>
