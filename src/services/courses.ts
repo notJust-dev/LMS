@@ -17,6 +17,7 @@ export function useCourses() {
       const { data, error } = await supabase
         .from('courses')
         .select('*, instructor:profiles!courses_instructor_id_fkey(name, avatar_url, role, company)')
+        .eq('is_published', true)
         .throwOnError();
       if (error) throw error;
       return data;
