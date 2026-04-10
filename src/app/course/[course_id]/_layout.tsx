@@ -18,11 +18,11 @@ export default function CourseLayout() {
       <Stack.Screen
         name="lesson/[lesson_id]"
         options={{
-          headerTransparent: true,
-          headerTitle: '',
+          headerLargeTitle: false,
+          headerTitle: 'Lesson',
           headerShadowVisible: false,
           // headerStyle: { backgroundColor: 'black' },
-          headerTintColor: 'white',
+          // headerTintColor: 'white',
         }}
       />
     </Stack>

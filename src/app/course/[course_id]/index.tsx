@@ -108,8 +108,8 @@ export default function CourseDetailsScreen() {
   const discount =
     course.original_price != null
       ? Math.round(
-          ((course.original_price - course.price) / course.original_price) * 100
-        )
+        ((course.original_price - course.price) / course.original_price) * 100
+      )
       : null;
 
   // Expand first chapter by default

@@ -1,16 +1,13 @@
-import { formatDuration } from '@/lib/format';
 import { useCourse } from '@/services/courses';
 import { useLesson } from '@/services/lessons';
-import { Pressable, ScrollView, Text, View } from '@/tw';
-import { Image } from '@/tw/image';
+import { ScrollView, Text, View } from '@/tw';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Stack } from 'expo-router/stack';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import {
   ChevronRight,
   Download,
   FileText,
-  Maximize,
-  Play,
   Users,
 } from 'lucide-react-native';
 import { ActivityIndicator, Alert } from 'react-native';
@@ -30,6 +27,14 @@ export default function LessonPlayerScreen() {
   const { data: lesson, isLoading } = useLesson(lesson_id);
   const { data: course } = useCourse(course_id);
 
+  const videoUrl =
+    'https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_1/segments/bigbuck_bunny_8bit_15000kbps_1080p_60.0fps_h264.mp4';
+
+  const player = useVideoPlayer(videoUrl, player => {
+    player.play();
+  });
+
+
   if (isLoading || !lesson) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
@@ -38,18 +43,18 @@ export default function LessonPlayerScreen() {
     );
   }
 
-  const chapter = lesson.chapter;
-  const resources = [...lesson.resources].sort(
+  const chapter = lesson?.chapter;
+  const resources = [...lesson?.resources].sort(
     (a, b) => a.sort_order - b.sort_order
   );
 
   // Build a flat sorted list of all lesson IDs to find prev/next
   const allLessons = course
     ? [...course.chapters]
-        .sort((a, b) => a.sort_order - b.sort_order)
-        .flatMap((ch) =>
-          [...ch.lessons].sort((a, b) => a.sort_order - b.sort_order)
-        )
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .flatMap((ch) =>
+        [...ch.lessons].sort((a, b) => a.sort_order - b.sort_order)
+      )
     : [];
   const currentIndex = allLessons.findIndex((l) => l.id === lesson_id);
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
@@ -58,6 +63,7 @@ export default function LessonPlayerScreen() {
 
   return (
     <View className="flex-1 bg-white">
+      <Stack.Screen options={{ headerTitle: lesson.title }} />
       <Stack.Toolbar>
         {prevLesson ? (
           <Stack.Toolbar.Button
@@ -95,31 +101,14 @@ export default function LessonPlayerScreen() {
         )}
       </Stack.Toolbar>
 
-      {/* Video section */}
-      <View className="w-full aspect-video bg-black relative">
-        <Image
-          source={lesson.video_url ?? 'https://via.placeholder.com/800x450'}
-          className="w-full h-full object-cover opacity-80"
-        />
-
-        <View className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-          <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-[12px] font-medium text-white">
-              {formatDuration(lesson.duration)}
-            </Text>
-            <Maximize size={20} color="white" />
-          </View>
-          <View className="h-1 w-full bg-white/30 rounded-full overflow-hidden">
-            <View className="h-full bg-primary w-[0%] rounded-full" />
-          </View>
-        </View>
-
-        <View className="absolute inset-0 items-center justify-center">
-          <Pressable className="w-16 h-16 bg-white/20 rounded-full items-center justify-center border border-white/30 active:scale-[0.9]">
-            <Play size={30} color="white" fill="white" />
-          </Pressable>
-        </View>
-      </View>
+      {/* Video player */}
+      <VideoView
+        player={player}
+        nativeControls
+        contentFit="contain"
+        allowsPictureInPicture
+        style={{ width: '100%', aspectRatio: 16 / 9, backgroundColor: 'black' }}
+      />
 
       {/* Scrollable content */}
       <ScrollView className="flex-1" contentContainerClassName="px-6 pt-8 pb-24">
