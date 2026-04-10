@@ -24,14 +24,17 @@ type ChapterWithLessons = CourseDetail['chapters'][number];
 function Chapter({
   chapter,
   index,
+  courseId,
   isExpanded,
   onToggle,
 }: {
   chapter: ChapterWithLessons;
   index: number;
+  courseId: string;
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const router = useRouter();
   const sorted = [...chapter.lessons].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
@@ -52,7 +55,13 @@ function Chapter({
       {isExpanded && (
         <View className="p-4 gap-4">
           {sorted.map((lesson) => (
-            <View key={lesson.id} className="flex-row items-center gap-4">
+            <Pressable
+              key={lesson.id}
+              onPress={() =>
+                router.push(`/course/${courseId}/lesson/${lesson.id}`)
+              }
+              className="flex-row items-center gap-4 active:opacity-70"
+            >
               <View className="w-8 h-8 rounded-lg bg-blue-100 items-center justify-center">
                 <Play size={14} color="#2563EB" />
               </View>
@@ -65,7 +74,7 @@ function Chapter({
                 </Text>
               </View>
               {lesson.is_locked && <Lock size={16} color="#d1d5db" />}
-            </View>
+            </Pressable>
           ))}
         </View>
       )}
@@ -218,6 +227,7 @@ export default function CourseDetailsScreen() {
                   key={chapter.id}
                   chapter={chapter}
                   index={i}
+                  courseId={course_id}
                   isExpanded={expandedChapter === chapter.id}
                   onToggle={() =>
                     setExpandedChapter((prev) =>
