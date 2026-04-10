@@ -100,6 +100,37 @@ export function useCreateCourse() {
   });
 }
 
+export function useUpdateCourse(id: string) {
+  const supabase = useSupabase();
+  const { userId } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (updates: {
+      title?: string;
+      description?: string | null;
+      category?: string | null;
+      price?: number;
+      original_price?: number | null;
+      is_published?: boolean;
+    }) => {
+      const { data } = await supabase
+        .from('courses')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+        .throwOnError();
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: coursesKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: coursesKeys.tutor(userId!) });
+      queryClient.invalidateQueries({ queryKey: coursesKeys.all });
+    },
+  });
+}
+
 export function useDeleteCourse() {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
