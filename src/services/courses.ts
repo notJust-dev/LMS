@@ -143,15 +143,19 @@ export function useUploadCourseImage() {
       courseId: string;
       file: { uri: string; type: string };
     }) => {
-      const response = await fetch(file.uri);
-      const blob = await response.blob();
       const ext = file.type.split('/')[1] ?? 'jpg';
       const path = `${courseId}.${ext}`;
 
+      const formData = new FormData();
+      formData.append('', {
+        uri: file.uri,
+        type: file.type,
+        name: path,
+      } as unknown as Blob);
+
       const { error } = await supabase.storage
         .from('course-images')
-        .upload(path, blob, {
-          contentType: file.type,
+        .upload(path, formData, {
           upsert: true,
         });
       if (error) throw error;

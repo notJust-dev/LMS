@@ -94,14 +94,18 @@ export function useUploadLessonVideo() {
       lessonId: string;
       file: { uri: string; type: string; name: string };
     }) => {
-      const response = await fetch(file.uri);
-      const blob = await response.blob();
       const path = `${lessonId}.mp4`;
+
+      const formData = new FormData();
+      formData.append('', {
+        uri: file.uri,
+        type: file.type,
+        name: path,
+      } as unknown as Blob);
 
       const { error } = await supabase.storage
         .from('lesson-videos')
-        .upload(path, blob, {
-          contentType: file.type,
+        .upload(path, formData, {
           upsert: true,
         });
       if (error) throw error;
