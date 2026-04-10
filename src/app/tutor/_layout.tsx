@@ -18,6 +18,10 @@ export default function TutorLayout() {
         options={{ title: 'Edit Course' }}
       />
       <Stack.Screen
+        name="[course_id]/enrollments"
+        options={{ title: 'Enrollments' }}
+      />
+      <Stack.Screen
         name="[course_id]/lessons"
         options={{ title: 'Manage Lessons' }}
       />

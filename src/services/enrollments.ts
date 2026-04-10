@@ -4,6 +4,7 @@ import { useSupabase } from '@/lib/supabase';
 export const enrollmentKeys = {
   all: ['enrollments'] as const,
   check: (courseId: string) => ['enrollments', 'check', courseId] as const,
+  byCourse: (courseId: string) => ['enrollments', 'course', courseId] as const,
 };
 
 export function useMyEnrollments() {
@@ -25,6 +26,27 @@ export function useMyEnrollments() {
 
 export type EnrollmentWithCourse = NonNullable<
   ReturnType<typeof useMyEnrollments>['data']
+>[number];
+
+export function useCourseEnrollments(courseId: string) {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: enrollmentKeys.byCourse(courseId),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('enrollments')
+        .select('*, profile:profiles!enrollments_user_id_fkey(name, avatar_url)')
+        .eq('course_id', courseId)
+        .order('enrolled_at', { ascending: false })
+        .throwOnError();
+      return data;
+    },
+  });
+}
+
+export type CourseEnrollment = NonNullable<
+  ReturnType<typeof useCourseEnrollments>['data']
 >[number];
 
 export function useIsEnrolled(courseId: string) {

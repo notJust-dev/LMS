@@ -187,7 +187,7 @@ export default function CourseDetailsScreen() {
               icon={<Users size={20} color="#2563EB" />}
               label="Enrollments"
               subtitle={`${course.review_count} students`}
-              onPress={() => {}}
+              onPress={() => router.push(`/tutor/${course_id}/enrollments`)}
             />
             <ActionRow
               icon={
