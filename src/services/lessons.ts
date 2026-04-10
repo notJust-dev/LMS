@@ -23,3 +23,23 @@ export function useLesson(id: string) {
 }
 
 export type LessonDetail = NonNullable<ReturnType<typeof useLesson>['data']>;
+
+/**
+ * Returns a signed URL for a lesson video (valid for 1 hour).
+ * Pass the `video_url` column value (the storage path within the bucket).
+ */
+export function useLessonVideoUrl(videoPath: string | null) {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: ['lesson-video-url', videoPath],
+    enabled: !!videoPath,
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from('lesson-videos')
+        .createSignedUrl(videoPath!, 3600);
+      if (error) throw error;
+      return data.signedUrl;
+    },
+  });
+}

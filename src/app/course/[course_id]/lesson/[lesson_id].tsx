@@ -1,5 +1,5 @@
 import { useCourse } from '@/services/courses';
-import { useLesson } from '@/services/lessons';
+import { useLesson, useLessonVideoUrl } from '@/services/lessons';
 import { ScrollView, Text, View } from '@/tw';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Stack } from 'expo-router/stack';
@@ -26,14 +26,15 @@ export default function LessonPlayerScreen() {
   const router = useRouter();
   const { data: lesson, isLoading } = useLesson(lesson_id);
   const { data: course } = useCourse(course_id);
+  const { data: signedVideoUrl } = useLessonVideoUrl(lesson?.video_url ?? null);
 
   const videoUrl =
+    signedVideoUrl ??
     'https://avtshare01.rz.tu-ilmenau.de/avt-vqdb-uhd-1/test_1/segments/bigbuck_bunny_8bit_15000kbps_1080p_60.0fps_h264.mp4';
 
-  const player = useVideoPlayer(videoUrl, player => {
+  const player = useVideoPlayer(videoUrl, (player) => {
     player.play();
   });
-
 
   if (isLoading || !lesson) {
     return (
