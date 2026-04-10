@@ -49,6 +49,73 @@ export type CourseEnrollment = NonNullable<
   ReturnType<typeof useCourseEnrollments>['data']
 >[number];
 
+/**
+ * Returns the most recently enrolled course with progress info
+ * for the "Continue Learning" hero card.
+ */
+export function useContinueLearning() {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: ['continue-learning'],
+    queryFn: async () => {
+      // Get the most recent enrollment
+      const { data: enrollment } = await supabase
+        .from('enrollments')
+        .select(
+          '*, course:courses(*, instructor:profiles!courses_instructor_id_fkey(name), chapters(*, lessons(*)))'
+        )
+        .order('enrolled_at', { ascending: false })
+        .limit(1)
+        .single()
+        .throwOnError();
+
+      if (!enrollment?.course) return null;
+
+      const course = enrollment.course;
+
+      // Get all lessons sorted
+      const allLessons = [...course.chapters]
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .flatMap((ch) =>
+          [...ch.lessons].sort((a, b) => a.sort_order - b.sort_order)
+        );
+
+      if (allLessons.length === 0) return null;
+
+      // Get completed lessons for this course
+      const lessonIds = allLessons.map((l) => l.id);
+      const { data: progress } = await supabase
+        .from('lesson_progress')
+        .select('lesson_id')
+        .in('lesson_id', lessonIds)
+        .eq('completed', true)
+        .throwOnError();
+
+      const completedIds = new Set(progress?.map((p) => p.lesson_id) ?? []);
+      const completedCount = completedIds.size;
+      const totalLessons = allLessons.length;
+      const progressPercent =
+        totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+      // Find the first uncompleted lesson (or fall back to first lesson)
+      const nextLesson =
+        allLessons.find((l) => !completedIds.has(l.id)) ?? allLessons[0];
+
+      return {
+        courseId: course.id,
+        courseTitle: course.title,
+        instructorName: course.instructor?.name ?? 'Unknown',
+        imageUrl: course.image_url,
+        completedCount,
+        totalLessons,
+        progressPercent,
+        nextLessonId: nextLesson.id,
+      };
+    },
+  });
+}
+
 export function useIsEnrolled(courseId: string) {
   const supabase = useSupabase();
 

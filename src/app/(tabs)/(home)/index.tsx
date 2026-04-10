@@ -1,6 +1,7 @@
 import { formatDuration } from '@/lib/format';
 import { useCourses, type CourseWithInstructor } from '@/services/courses';
 import {
+  useContinueLearning,
   useMyEnrollments,
   type EnrollmentWithCourse,
 } from '@/services/enrollments';
@@ -65,9 +66,19 @@ function TopBar() {
 
 function HeroContinueCard() {
   const router = useRouter();
-  const progress = 65;
-  const lessonsCompleted = 12;
-  const totalLessons = 18;
+  const { data, isLoading } = useContinueLearning();
+
+  if (isLoading || !data) return null;
+
+  const {
+    courseId,
+    courseTitle,
+    instructorName,
+    completedCount,
+    totalLessons,
+    progressPercent,
+    nextLessonId,
+  } = data;
 
   return (
     <View className="px-6 mt-2">
@@ -76,16 +87,16 @@ function HeroContinueCard() {
           <View className="flex-row items-center gap-2 mb-4">
             <View className="px-2.5 py-1 bg-blue-50 rounded-md">
               <Text className="text-primary text-[11px] font-bold uppercase tracking-wider">
-                In Progress
+                {progressPercent === 100 ? 'Completed' : 'In Progress'}
               </Text>
             </View>
           </View>
 
           <Text className="text-[20px] font-bold text-text-main leading-tight mb-2">
-            Mastering Figma: Advanced UI Design Systems
+            {courseTitle}
           </Text>
           <Text className="text-[14px] text-text-muted mb-5">
-            by Alex Rivera &bull; {lessonsCompleted}/{totalLessons} Lessons
+            by {instructorName} &bull; {completedCount}/{totalLessons} Lessons
           </Text>
 
           <View className="mb-6">
@@ -94,24 +105,26 @@ function HeroContinueCard() {
                 Course Progress
               </Text>
               <Text className="text-[13px] font-bold text-primary">
-                {progress}%
+                {progressPercent}%
               </Text>
             </View>
             <View className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
               <View
                 className="h-full bg-primary rounded-full"
-                style={{ width: `${progress}%` }}
+                style={{ width: `${progressPercent}%` }}
               />
             </View>
           </View>
 
           <Pressable
-            onPress={() => router.push('/course/1/lesson/1-1')}
+            onPress={() =>
+              router.push(`/course/${courseId}/lesson/${nextLessonId}`)
+            }
             className="w-full bg-primary py-3.5 rounded-xl active:scale-[0.98] flex-row items-center justify-center gap-2"
           >
             <PlayCircle size={20} color="#ffffff" />
             <Text className="text-white font-bold text-[16px]">
-              Resume Lesson
+              {progressPercent === 100 ? 'Review Lessons' : 'Resume Lesson'}
             </Text>
           </Pressable>
         </View>
